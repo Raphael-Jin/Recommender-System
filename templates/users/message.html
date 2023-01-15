@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户评过的电影</title>
+
+    <style>
+        h2{
+            text-align: center;
+            font-family: Georgia, serif;
+            font-weight: bold
+        }
+        li{
+            list-style: none;
+            text-align: center;
+            {#display: inline-block;#}
+        }
+    </style>
+</head>
+
+<body>
+<h2>Your Rates History：</h2>
+<br>
+<div style="text-align:center;">
+<a href="http://127.0.0.1:8000/">Back</a>
+</div>
+<br/>
+{% for dd in lst %}
+    <li>
+    <p>{{ dd }}</p>
+    </li>
+
+{%  endfor %}
+
+
+
+
+</body>
+</html>

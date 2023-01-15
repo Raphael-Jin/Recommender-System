@@ -1,0 +1,761 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>推荐系统主页</title>
+		<link rel="stylesheet" href="{% static 'css/firstPage.css' %}" >
+<!--        <link rel ="stylesheet" href="{% static 'css/main.css' %}">-->
+<!--        <link rel ="stylesheet" href="{% static 'css/demo.css' %}">-->
+<!--        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">-->
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+		<script type="text/javascript" src="{% static 'js/myvar.js' %}"></script>
+
+        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+  <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+{#  <script src="http://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>#}
+        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+{#和分类标签排版有关#}
+        <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
+{#        <script type="text/javascript" src="{% static 'js/starScore.js' %}"></script>#}
+
+        <script type="text/javascript" src="{% static 'js/jquery.raty.js' %}"></script>
+{#		<script type="text/javascript" src="js/Star.js" ></script>#}
+{#        <script type="text/javascript" src="{% static 'js/GetText.js' %}"></script>#}
+
+        <style>
+			.logo{
+				text-align:center
+
+			}
+
+			.flex-center{
+				text-align:center;
+				margin-top: 8px;
+			}
+
+            .search_id{
+                margin-right:30px;
+            }
+            .search_id input{
+                float: right;
+                text-align:center;
+                color: #337ab7;
+            }
+
+            .data input{
+                margin-left:200px!important;
+                float: left;
+            }
+
+
+            recommend1{
+                position:absolute;
+                left:700px;
+                background-color: #008CBA;
+                color: white;
+                padding: 5px 12px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+
+		.mytext{
+			text-align:center
+		}
+
+
+        </style>
+	</head>
+
+	<body background="{% static 'img/logo/bkground.jpg' %}">
+	<div class="logo">
+		<img src="{% static 'img/logo/logo.png' %}" />
+	</div>
+
+	<div class="flex-center">
+		<div class="container_">
+			<div>
+				{% if user.is_authenticated %}
+					<div class = "login_">
+	{#                 <p>Login succuessfully, welcome:<a href="{% url 'check' %}">{{ user.username }}</a></p>#}
+						<p>Login succuessfully, welcome:<a href="{% url 'users:showmessage' %}">{{ user.username }}</a></p>
+	{#                    <p>Your ID is:{{ user.id }}</p>#}
+					<button class="btn btn-default"><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></button>
+					</div>
+
+
+
+				{% else %}
+					<p>
+						<button class="btn btn-default"><a href="{% url 'login' %}">LOGIN</a></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<button class="btn btn-default"><a href="{% url 'users:register' %}">SIGN UP</a></button>
+					</p>
+				{% endif %}
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+    var result;
+    $(function(){
+
+        $(".starts").raty({
+            number : 5,//星星个数
+
+
+            {#score :3,#}
+            path : '{% static 'img' %}',//图片路径
+            {#target : '#grade',//#}
+            {#hints : ['0.5','1','1.5','2','2.5','3','3.5','4','4.5','5'],#}
+            hints : ['不喜欢','不喜欢','一般','喜欢','推荐'],
+            starHalf:'star-half-big.png',
+            half:true,
+            round:{down:.26,full:.7,up:.9},
+            click : function(score, evt) {
+
+                if((score<0.5)) result = 0.5;
+                else if((score>0.51)&&(score<1.0)) result = 1.0;
+                else if((score>1.1)&&(score<1.5)) result = 1.5;
+                else if((score>1.5)&&(score<2)) result = 2.0;
+                else if((score>2.0)&&(score<2.5)) result = 2.5;
+                else if((score>2.5)&&(score<3.0)) result = 3.0;
+                else if((score>3.0)&&(score<3.5)) result = 3.5;
+                else if((score>3.5)&&(score<4.0)) result = 4.0;
+                else if((score>4.0)&&(score<4.5)) result = 4.5;
+                else  result = 5.0;
+
+                $("#rating").val(result.toFixed(1));
+                {#alert(result.toFixed(1));#}
+
+            }
+        });
+
+
+
+    });
+    $(document).ready(function(){
+    $(".starts").click(function(){
+        $("#imdbId").val(this.id);
+        $("#userId").val({{ user.id}});
+    {#alert(this.id);#}
+  });
+    $("#recommend1").click(function () {
+        $("#userId2").val({{ user.id}});
+
+    });
+
+    $("#idd").click(function () {
+        $("#userId").val({{ user.id}});
+
+    });
+    $("#recommend2").click(function () {
+        $("#userId3").val({{ user.id}});
+
+    });
+{#$("#103776").raty('set', { option: 3.0 });#}
+});
+
+    {#alert({{ user.id }})#}
+</script>
+
+
+
+    <!--	搜索-->
+	<form action="users/search/" method="get">
+		{% csrf_token %}
+	 <div class="search_id">
+			 <input type="text" placeholder="Input Movie name..." name="id_search" id="id_search" />
+		 		<input type="submit" value="search"/>
+	 </div>
+	</form>
+
+    <div>
+      <hr/>
+      <ul class="nav nav-tabs nav-justified" id="index">
+        <li class="active"><a href="#tab0" data-toggle="tab">Action</a></li>
+		  <li><a href="#tab1" data-toggle="tab">Horror</a></li>
+		  <li><a href="#tab2" data-toggle="tab">Comedy</a></li>
+		  <li><a href="#tab3" data-toggle="tab">Animation</a></li>
+        <li><a href="#tab4" data-toggle="tab">Science Fiction</a></li>
+        <li><a href="#tab6" data-toggle="tab">Affectional</a></li>
+		  <li><a href="#tab7" data-toggle="tab">Drama</a></li>
+      </ul>
+    </div>
+
+
+{#动作片#}
+  <div class="tab-content" id="my-content">
+      <div class="tab-pane fade in active" id="tab0">
+        <ul class="figures_lists">
+
+          <li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film"  target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/action/1418190.jpg' %}" alt="Casino Royale">
+            </a>
+            <strong class="figure_title">
+              <a _boss="film"  href="https://movie.douban.com/subject/1418190/" target="_blank" title="Casino Royale">Casino Royale</a>
+
+                <div class="evaluate">
+                   <div class="starts" id = "1418190"></div>
+                </div>
+            </strong>
+
+          </li>
+
+
+          <li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film"  target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/action/1294991.jpg' %}" alt="Fist of Fury">
+            </a>
+            <strong class="figure_title">
+              <a _boss="film"  href="https://movie.douban.com/subject/1294991/" target="_blank" title="Fist of Fury">Fist of Fury</a>
+                <div class="evaluate"><div class="starts" id = "1294991"></div></div>
+            </strong>
+          </li>
+
+
+         <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/action/1309069.jpg' %}" alt="Batman Begins">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1309069/" target="_blank" title="Batman Begins">Batman Begins</a>
+                                        <div class="starts" id = "1309069"></div>
+    				</strong>
+		  </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/action/26336252.jpg' %}" alt="碟中谍6：全面瓦解">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/26336252/" target="_blank" title="碟中谍6：全面瓦解">Mission: Impossible - Fallout</a>
+                                        <div class="starts" id = "26336252"></div>
+    				</strong>
+		  </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/action/1293530.jpg' %}" alt="角斗士">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1293530/" target="_blank" title="角斗士">Gladiator</a>
+                                        <div class="starts" id = "1293530"></div>
+    				</strong>
+		  </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/action/1297445.jpg' %}" alt="洛奇">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1297445/" target="_blank" title="洛奇">Rocky IV</a>
+                                        <div class="starts" id = "1297445"></div>
+    				</strong>
+		  </li>
+
+
+        </ul>
+      </div>
+
+
+{#恐怖片#}
+       <div class="tab-pane fade" id="tab1">
+        <ul class="figures_lists">
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/thriller/2350904.jpg' %}" alt="电锯惊魂">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/2350904/" target="_blank" title="电锯惊魂">SAW 5</a>
+                <div class="evaluate"><div class="starts" id = "2350904"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/thriller/1466007.jpg' %}" alt="寂静岭">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1466007/" target="_blank" title="寂静岭">Silent Hill</a>
+                <div class="evaluate"><div class="starts" id = "1466007"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/thriller/1895120.jpg' %}" alt="死寂">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1895120/" target="_blank" title="死寂">Dead Silence</a>
+                <div class="evaluate"><div class="starts" id = "1895120"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/thriller/1301459.jpg' %}" alt="小岛惊魂">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1301459/" target="_blank" title="小岛惊魂">The Others</a>
+                <div class="evaluate"><div class="starts" id = "1301459"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/thriller/3804629.jpg' %}" alt="招魂">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/3804629/" target="_blank" title="招魂">The Conjuring</a>
+                <div class="evaluate"><div class="starts" id = "3804629"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/thriller/26688480.jpg' %}" alt="逃出绝命镇">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/26688480/" target="_blank" title="逃出绝命镇">Get Out</a>
+                <div class="evaluate"><div class="starts" id = "26688480"></div></div>
+            </strong>
+          </li>
+
+
+
+
+
+
+
+        </ul>
+      </div>
+
+{# 喜剧片#}
+      <div class="tab-pane fade" id="tab2">
+        <ul class="figures_lists">
+          	<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/comedy/6786002.jpg' %}" alt="触不可及">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/6786002/" target="_blank" title="触不可及">Intocable</a>
+                <div class="evaluate"><div class="starts" id = "6786002"></div></div>
+            </strong>
+          </li>
+
+          	<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/comedy/1829654.jpg' %}" alt="憨豆">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1829654/" target="_blank" title="憨豆">Mr Bean‘s Holiday</a>
+                <div class="evaluate"><div class="starts" id = "1829654"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/comedy/1292274.jpg' %}" alt="幸福">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1292274/" target="_blank" title="幸福">The Terminal</a>
+                <div class="evaluate"><div class="starts" id = "1292274"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/comedy/1302425.jpg' %}" alt="喜剧之王">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1302425/" target="_blank" title="喜剧之王">King of Comedy</a>
+                <div class="evaluate"><div class="starts" id = "1302425"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/comedy/1422925.jpg' %}" alt="小鬼">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1422925/" target="_blank" title="小鬼">Home Alone4</a>
+                <div class="evaluate"><div class="starts" id = "1422925"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/comedy/1292624.jpg' %}" alt="尖峰时刻">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1292624/" target="_blank" title="尖峰时刻">Rush Hour</a>
+                <div class="evaluate"><div class="starts" id = "1292624"></div></div>
+            </strong>
+          </li>
+
+
+
+        </ul>
+      </div>
+
+
+
+
+
+
+      <!--动画片-->
+<div class="tab-pane fade" id="tab3">
+        <ul class="figures_lists">
+          <li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/animation/1291561.jpg' %}" alt="千与千寻">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1291561/" target="_blank" title="千与千寻">Spirited Away</a>
+                <div class="evaluate"><div class="starts" id = "1291561"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/animation/1301753.jpg' %}" alt="狮子王">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1301753/" target="_blank" title="狮子王">Lion King</a>
+                <div class="evaluate"><div class="starts" id = "1301753"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/animation/1308807.jpg' %}" alt="哈尔的移动城堡">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1308807/" target="_blank" title="哈尔的移动城堡">Howl's Moving Castle</a>
+                <div class="evaluate"><div class="starts" id = "1308807"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/animation/1309201.jpg' %}" alt="马达">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/1309201/" target="_blank" title="马达">Madagascar</a>
+                <div class="evaluate"><div class="starts" id = "1309201"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/animation/25662329.jpg' %}" alt="疯狂动物城">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/25662329/" target="_blank" title="疯狂动物城">Zootopia</a>
+                <div class="evaluate"><div class="starts" id = "25662329"></div></div>
+            </strong>
+          </li>
+
+			<li class="list_item" data-trigger-class="list_item_hover">
+            <a _boss="film" href="" target="_blank" class="figure" tabindex="-1">
+              <img src="{% static 'img/animation/26683354.jpg' %}" alt="宝可梦">
+            </a>
+            <strong class="figure_title">
+                <a _boss="film" href="https://movie.douban.com/subject/26683354/" target="_blank" title="宝可梦">Pokemon</a>
+                <div class="evaluate"><div class="starts" id = "26683354"></div></div>
+            </strong>
+          </li>
+
+        </ul>
+      </div>
+
+{# 科幻#}
+
+      <div class="tab-pane fade" id="tab4">
+        <ul class="figures_lists">
+          <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/science/1294362.jpg' %}" alt="星球大战前传1：幽灵的威胁">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1294362/" target="_blank" title="星球大战前传1：幽灵的威胁">Star War</a>
+                        <div class="evaluate"><div class="starts" id = "1294362"></div></div>
+    				</strong>
+		  </li>
+
+          <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/science/1306723.jpg' %}" alt="Superman III">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1306723/" target="_blank" title="Superman III">Superman III</a>
+                        <div class="evaluate"><div class="starts" id = "1306723"></div></div>
+    				</strong>
+		  </li>
+
+          <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/science/1296929.jpg' %}" alt="Frankenstein">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1296929/" target="_blank" title="Frankenstein">Frankenstein</a>
+                        <div class="evaluate"><div class="starts" id = "1296929"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/science/1293904.jpg' %}" alt="星际迷航">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1293904/" target="星际迷航" title="Frankenstein">Star Trek</a>
+                        <div class="evaluate"><div class="starts" id = "1293904"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/science/1652587.jpg' %}" alt="阿凡达">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/1652587/" target="_blank" title="阿凡达">Avatar</a>
+                        <div class="evaluate"><div class="starts" id = "1652587"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/science/3231742.jpg' %}" alt="钢铁侠">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film" href="https://movie.douban.com/subject/3231742/" target="_blank" title="钢铁侠">Iron Man 3</a>
+                        <div class="evaluate"><div class="starts" id = "3231742"></div></div>
+    				</strong>
+		  </li>
+
+
+
+
+
+
+        </ul>
+      </div>
+
+
+
+
+<!--爱情片-->
+     <div class="tab-pane fade" id="tab6">
+        <ul class="figures_lists">
+          <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/love/1293963.jpg' %}" alt="Love in the Afternoon">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/1293963/" target="_blank" title="Love in the Afternoon">Love in the Afternoon</a>
+                        <div class="evaluate"><div class="starts" id = "1293963"></div></div>
+    				</strong>
+		  </li>
+
+          <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/love/1302050.jpg' %}" alt="Hiroshima, My Love">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/1302050/" target="_blank" title="Hiroshima, My Love">Hiroshima, My Love</a>
+                        <div class="evaluate"><div class="starts" id = "1302050"></div></div>
+    				</strong>
+		  </li>
+
+          <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/love/1296250.jpg' %}" alt="The Lovers">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/1296250/" target="_blank" title="The Lovers">The Lovers</a>
+                        <div class="evaluate"><div class="starts" id = "1296250"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/love/1309163.jpg' %}" alt="恋恋">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/1309163/" target="_blank" title="恋恋">The Notebook</a>
+                        <div class="evaluate"><div class="starts" id = "1309163"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/love/1422992.jpg' %}" alt="简爱">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/1422992/" target="_blank" title="简爱">Jane Eyre</a>
+                        <div class="evaluate"><div class="starts" id = "1422992"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/love/3319755.jpg' %}" alt="怦然">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/3319755/" target="_blank" title="砰然">Flipped</a>
+                        <div class="evaluate"><div class="starts" id = "3319755"></div></div>
+    				</strong>
+		  </li>
+
+
+
+
+
+
+        </ul>
+      </div>
+
+
+
+{#      剧情片#}
+      <div class="tab-pane fade" id="tab7">
+        <ul class="figures_lists">
+          <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/drama/1292052.jpg' %}" alt="肖申克">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/1292052/" target="_blank" title="肖申克">The Shawshank Redemption</a>
+                        <div class="evaluate"><div class="starts" id = "1292052"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/drama/1296141.jpg' %}" alt="Witness for the Prosecution">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/1296141/" target="_blank" title="Witness for the Prosecution">Witness for the Prosecution</a>
+                        <div class="evaluate"><div class="starts" id = "1296141"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/drama/2334904.jpg' %}" alt="Shutter Island">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/2334904/" target="_blank" title="Shutter Island">Shutter Island</a>
+                        <div class="evaluate"><div class="starts" id = "2334904"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/drama/3077413.jpg' %}" alt="The Butterfly Effect 3: Revelations">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/3077413/" target="_blank" title="The Butterfly Effect 3: Revelations">The Butterfly Effect 3: Revelations</a>
+                        <div class="evaluate"><div class="starts" id = "3077413"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/drama/6860160.jpg' %}" alt="Les Miserables">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/6860160/" target="_blank" title="Les Miserables">Les Miserables</a>
+                        <div class="evaluate"><div class="starts" id = "6860160"></div></div>
+    				</strong>
+		  </li>
+
+            <li class="list_item" data-trigger-class="list_item_hover">
+    				<a _boss="film" target="_blank" class="figure" tabindex="-1">
+    					<img src="{% static 'img/drama/24860318.jpg' %}" alt="但丁">
+    				</a>
+    				<strong class="figure_title">
+    					<a _boss="film"  href="https://movie.douban.com/subject/24860318/" target="_blank" title="但丁">Inferno</a>
+                        <div class="evaluate"><div class="starts" id = "24860318"></div></div>
+    				</strong>
+		  </li>
+
+
+        </ul>
+      </div>
+</div>
+
+
+
+
+
+<!--	评分-->
+    <div class="data input">
+        <div>
+   <form action="/insert/" method="get" target="nm_iframe">
+	   <div class="two_input">
+	    <input type="text" class = "btn btn-default" placeholder="Input Movie id here..." name="imdbId" id = "imdbId" />
+		<input type="text" class = "btn btn-default" placeholder="Input Rates here..." name="rating"  id = "rating" />
+	   </div>
+
+			<input type="hidden" name="userId" id = "userId">
+       <input class = "btn btn-default" type="submit" id="idd" value="Confirm">
+   </form>
+<iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+    </div>
+
+	<!--	推荐-->
+	<form action="users/recommend1/" method="get">
+		{% csrf_token %}
+		<input type="hidden" name="userIdd" id = "userId2">
+		<input type="submit" class = "btn btn-default" name = "viewResult" class="view" id = "recommend1" value="Get Your Recommendation！">
+
+	</form>
+	<iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+
+    </div>
+
+
+
+
+
+
+<!--<form action="/insert/" method="get" target="nm_iframe">-->
+<!--	   <div class="two_input">-->
+<!--	    <input type="hidden" name="imdbId" id = "imdbId" />-->
+<!--		<input type="hidden" name="rating"  id = "rating" />-->
+<!--	   </div>-->
+
+<!--			<input type="hidden" name="userId" id = "userId">-->
+<!--       <input type="submit" value="Rating">-->
+<!--   </form>-->
+<!--<iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>-->
+
+
+
+
+
+
+
+
+
+
+
+	</body>
+</html>

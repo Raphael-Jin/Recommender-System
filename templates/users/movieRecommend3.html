@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>推荐电影页面</title>
+
+        <style>
+
+        li{
+            list-style: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body background="{% static 'img/logo/bkground.jpg' %}">
+<h1>查找到：</h1>
+<div style="text-align:center;">
+<br>
+<a href="http://127.0.0.1:8000/">Back</a>
+<br/>
+</div>>
+{% for result in results %}
+    <li>
+        <p>{{ result.title }}</p>
+        doubanid:<p>{{ result.imdbId }}</p>
+        <img src="{{ result.poster }}" alt="">
+    </li>
+
+{%  endfor %}
+</body>
+</html>
