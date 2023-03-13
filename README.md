@@ -7,7 +7,6 @@ NUS Summer Workshop2021 TOP Prize🏆！！
 Posters: https://sws.comp.nus.edu.sg/2021/Posters.htm
 
 <img src="./home_page.jpg" width=60% align=center />
-<img src="./recommend_res.jpg" width=60% align=center/>
 
 •    Utilized **XPath**, **Beautiful Soup** to crawl & parse over 4 million user reviews from ‘Douban.’ Built user model.
 
